@@ -61,6 +61,10 @@ function ReportDashboard(props: any) {
   const handleLogout = async () => {
     try {
       // implement handle logut
+      const { data } = await axios.get("/revoke");
+      localStorage.removeItem("userInfo");
+      navigate("/");
+      console.log("Logout Successful!");
     } catch (error) {
       console.error("Error logging out: ", error);
     }

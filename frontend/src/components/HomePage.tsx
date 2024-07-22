@@ -16,6 +16,7 @@ import {
   FormLabel,
 } from "@mui/material";
 import { FormData, Errors } from "../utils/types.ts";
+import { UserState } from "../Context/UserProvider.tsx";
 
 function HomePage(props: any) {
   const [formData, setFormData] = useState<FormData>({
@@ -29,6 +30,7 @@ function HomePage(props: any) {
     phoneNumber: "123-456-7890",
   });
 
+  const { setUser } = UserState();
   const [errors, setErrors] = useState<Errors>({});
 
   const navigate = useNavigate();
@@ -89,13 +91,15 @@ function HomePage(props: any) {
         );
         console.log("Homopage: ", data);
 
+        localStorage.setItem("userInfo", JSON.stringify(data));
+        setUser(data);
+
         const authorizationUrl = data?.authorizationUrl;
         if (authorizationUrl) {
           // we did this to resolve CORS error
           // On backend side, we cannot redirect user to different route while google OAuth is going on!
           window.location.href = authorizationUrl;
         } else {
-          console.log("Homopage: ", data);
           navigate("/reportDashboard");
         }
       } catch (error) {
@@ -103,6 +107,12 @@ function HomePage(props: any) {
       }
     }
   };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo")!);
+
+    if (user) navigate("/reportDashboard");
+  }, [navigate]);
 
   return (
     <Box
