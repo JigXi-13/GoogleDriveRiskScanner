@@ -12,7 +12,7 @@ import {
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { MIME_TYPE_MAP } from "../utils/constants.ts";
-import { formatFileSize } from "../utils/helpers.ts";
+import { determineRisk, formatFileSize } from "../utils/helpers.ts";
 
 // Define the columns for the DataGrid
 const columns: GridColDef[] = [
@@ -31,10 +31,34 @@ const columns: GridColDef[] = [
       </a>
     ),
   },
-  { field: "fileType", headerName: "File Type", width: 130 },
-  { field: "fileSize", headerName: "File Size", width: 130 },
-  { field: "storageUsed", headerName: "Storage Used", width: 150 },
-  { field: "riskCounter", headerName: "Risk Counter", width: 150 },
+  { field: "fileType", headerName: "File Type", width: 180 },
+  { field: "fileSize", headerName: "File Size", width: 180 },
+  { field: "storageUsed", headerName: "Storage Used", width: 180 },
+  {
+    field: "riskLevel",
+    headerName: "Risk Level",
+    renderCell: (params) => {
+      let color;
+      switch (params.value) {
+        case "severe":
+          color = "red";
+          break;
+        case "major":
+          color = "blue";
+          break;
+        case "minor":
+          color = "green";
+          break;
+        default:
+          color = "gray";
+      }
+      return (
+        <span style={{ color }}>
+          <b>{params.value}</b>
+        </span>
+      );
+    },
+  },
 ];
 
 function ReportDashboard(props: any) {
@@ -59,7 +83,7 @@ function ReportDashboard(props: any) {
         fileType: MIME_TYPE_MAP[file?.mimeType] || "Unknown",
         fileSize: formatFileSize(file?.size),
         storageUsed: formatFileSize(file?.size),
-        riskCounter: file?.riskCounter || 0,
+        riskLevel: determineRisk(file),
       }));
       setFiles(transformedFiles);
     } catch (error) {

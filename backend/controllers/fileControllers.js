@@ -14,7 +14,7 @@ const fetchFilesMetadata = async (req, res) => {
       auth: oauth2Client,
       pageSize: 10,
       fields:
-        "nextPageToken, files(id, name, mimeType, size, quotaBytesUsed, webViewLink)",
+        "nextPageToken, files(id, name, mimeType, size, quotaBytesUsed, webViewLink, shared)",
       q: "mimeType != 'application/vnd.google-apps.folder'",
     },
     (err1, res1) => {
