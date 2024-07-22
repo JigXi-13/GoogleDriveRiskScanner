@@ -44,7 +44,7 @@ This project is a Google Drive Risk Analysis app where users can view the comple
 ## Setup and Instructions
 
 1. **Set up environment variables:**
-   Create a .env file in the root directory and add the following:
+   Create a .env file in the backend directory and add the following:
 
    ```sh
     - **CLIENT_ID**: The client ID obtained from the Google Developers Console.
@@ -59,7 +59,7 @@ This project is a Google Drive Risk Analysis app where users can view the comple
    
 2. **Instructions:**
    1. Clone the repository to your local machine.
-   2. Create a `.env` file in the root directory of the project.
+   2. Create a `.env` file in the backend directory of the project.
    3. Add the above configuration details to the `.env` file.
    4. Install the necessary dependencies by running `npm install`.
    5. Start the server by running `npm start`.
