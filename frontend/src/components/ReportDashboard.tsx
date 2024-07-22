@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { Container, Typography, Box, Button } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  Skeleton,
+  Grid,
+} from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { MIME_TYPE_MAP } from "../utils/constants.ts";
@@ -33,6 +40,8 @@ const columns: GridColDef[] = [
 function ReportDashboard(props: any) {
   const [files, setFiles] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,6 +64,8 @@ function ReportDashboard(props: any) {
       setFiles(transformedFiles);
     } catch (error) {
       console.error("Error fetching files: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,6 +80,27 @@ function ReportDashboard(props: any) {
       console.error("Error logging out: ", error);
     }
   };
+
+  const renderSkeletonLoader = () => (
+    <div style={{ height: 400, width: "100%" }}>
+      <Grid container spacing={2}>
+        {columns.map((column, index) => (
+          <Grid item xs key={index}>
+            <Skeleton variant="text" height={40} />
+          </Grid>
+        ))}
+        {[...Array(5)].map((_, rowIndex) => (
+          <Grid container item spacing={2} key={rowIndex}>
+            {columns.map((column, colIndex) => (
+              <Grid item xs key={colIndex}>
+                <Skeleton variant="rectangular" height={40} />
+              </Grid>
+            ))}
+          </Grid>
+        ))}
+      </Grid>
+    </div>
+  );
 
   return (
     <Box
@@ -89,29 +121,34 @@ function ReportDashboard(props: any) {
         Logout
       </Button>
       <Container maxWidth="lg">
-        <Typography variant="h4" align="center" gutterBottom>
+        <Typography variant="h3" align="center" gutterBottom mb={8}>
           G-Drive Risk Report
         </Typography>
         <div style={{ height: 400, width: "100%" }}>
-          <DataGrid
-            sx={{
-              ".MuiDataGrid-cell": {
-                "&:focus": { outline: "none" },
-              },
-            }}
-            checkboxSelection
-            disableRowSelectionOnClick
-            rows={files}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 5,
+          {loading ? (
+            renderSkeletonLoader()
+          ) : (
+            <DataGrid
+              disableAutosize
+              sx={{
+                ".MuiDataGrid-cell": {
+                  "&:focus": { outline: "none" },
                 },
-              },
-            }}
-            pageSizeOptions={[5]}
-          />
+              }}
+              checkboxSelection
+              disableRowSelectionOnClick
+              rows={files}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: 5,
+                  },
+                },
+              }}
+              pageSizeOptions={[5]}
+            />
+          )}
         </div>
       </Container>
     </Box>
